@@ -30,13 +30,13 @@ bool verifyCharacter(char character)
   }
 }
 
-void leftShift(std::vector<char> &registers, char **pointer)
+void leftShift(std::vector<char> const &registers, char **pointer)
 {
   if (*pointer != &(*registers.cbegin()))
     (*pointer)--;
 }
 
-void rightShift(std::vector<char> &registers, char **pointer)
+void rightShift(std::vector<char> const &registers, char **pointer)
 {
   if (*pointer != &(*registers.cend()))
     (*pointer)++;
@@ -51,7 +51,7 @@ void deincrament(char &registers)
   --registers;
 }
 
-void DrawRegisters(std::ostream &os, std::vector<char> &registers, char const *const loc)
+void DrawRegisters(std::ostream &os, std::vector<char> const &registers, char const *const loc)
 {
   const int size = registers.size();
   for (int i = 0; i < size; ++i)
@@ -69,7 +69,7 @@ void DrawRegisters(std::ostream &os, std::vector<char> &registers, char const *c
   os << std::endl;
 }
 
-void DrawFunctions(std::ostream &os, std::unordered_map<std::string, const char *> &functions)
+void DrawFunctions(std::ostream &os, std::unordered_map<std::string, const char *> const &functions)
 {
   for (auto &func : functions)
   {

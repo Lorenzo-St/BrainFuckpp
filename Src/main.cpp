@@ -9,7 +9,7 @@
 
 // BrainFuck programming language
 // ----------------------------------------------------------------
-// has x amount of memory spaces
+// has x amount of registers
 // commands are
 // > shift right by 1 memory space // Done
 //      note: cannot run off send of vector, maybe coult make it add registers

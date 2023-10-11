@@ -88,7 +88,7 @@ int main(int argc, char **argv)
       std::cout << instruction << std::endl;
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    evaluateCharacter(false, functions, loopStack, returns, registers, registers, threads, &inst, &location);
+    evaluateCharacter(debug, functions, loopStack, returns, registers, registers, threads, &inst, &location);
     ++inst;
   }
   for (auto &thread : threads)

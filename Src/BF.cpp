@@ -107,7 +107,7 @@ void readKey(char &dest)
 
 void print(char const &charac)
 {
-  if (charac == 12 || charac == '\n')
+  if (charac == 13 || charac == '\n')
     std::cout << std::endl;
   else
     std::cout << charac;
@@ -139,12 +139,10 @@ void makeFunction(std::unordered_map<std::string, const char *> &functions, char
     ++instrctions;
   }
   // add the function's location to the functions map
-  functions[name] = instrctions + 1;
+  functions[name] = instrctions;
   // move exectution to the end of the function
   while (*instrctions != ')')
     ++instrctions;
-  // go to one after the function
-  ++instrctions;
 }
 
 void jumpFunction(std::unordered_map<std::string, const char *> &functions, std::stack<const char *> &returns, char const *&instrctions)
@@ -171,7 +169,7 @@ void jumpFunction(std::unordered_map<std::string, const char *> &functions, std:
   // make sure the function is a valid call
   if (loca)
   {
-    returns.push(instrctions + 1);
+    returns.push(instrctions);
     instrctions = loca;
   }
 }
@@ -183,7 +181,6 @@ void returnFunction(std::stack<const char *> &returns, char const *&instrctions)
   {
     // jump back and pop
     instrctions = returns.top();
-    --instrctions;
     returns.pop();
   }
 }

@@ -19,6 +19,7 @@ bool verifyCharacter(char character)
 {
   switch (character)
   {
+  case ':':
   case '<':
   case '>':
   case '+':
@@ -128,6 +129,7 @@ void makeFunction(std::unordered_map<std::string, const char *> &functions, char
       escaped = true;
     else
     {
+
       if (verifyCharacter(*instrctions) == false)
       {
         std::cerr << "YOU FOOL: A function MUST ONLY be named with valid BF characters." << std::endl;

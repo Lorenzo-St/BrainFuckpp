@@ -7,7 +7,7 @@ and make it an actually functional programming language
 ## Implemented instruction
 ```
  > shift right by 1 register 
-      note: cannot run off send of vector, maybe coult make it add registers
+      note: cannot run off send of vector, maybe could make it add registers
  < shift left by 1 register
       note: cannot run off start of vector, can be used to return to first register
  + add 1 to current register

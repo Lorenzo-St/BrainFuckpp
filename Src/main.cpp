@@ -30,6 +30,7 @@
 //             on a specified register, maybe even standardized as register 0
 //  ( start of function
 //  ) close function
+// () Call function, name of function goes inside of ()
 // -----------------------------
 
 int main(int argc, char **argv)

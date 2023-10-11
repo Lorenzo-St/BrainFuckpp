@@ -25,4 +25,5 @@ and make it an actually functional programming language
             on a specified register, maybe even standardized as register 0
  ( start of function 
  ) close function
+() Call function, name of function goes inside of () 
 ```

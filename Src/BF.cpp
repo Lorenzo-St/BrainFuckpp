@@ -1,3 +1,13 @@
+/**
+ * @file BF.cpp
+ * @author Lorenzo St. Luce
+ * @brief Implementation for interpreter functions
+ * @version 0.1
+ * @date 2023-10-10
+ *
+ * @copyright Copyright Lorenzo St. Luce(c) 2023
+ *
+ */
 #include <vector>
 #include <iostream>
 #include <iomanip>

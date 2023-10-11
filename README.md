@@ -9,7 +9,7 @@ and make it an actually functional programming language
  > shift right by 1 register 
       note: cannot run off send of vector, maybe could make it add registers
  < shift left by 1 register
-      note: cannot run off start of vector, can be used to return to first register
+      note: cannot run off start of vector, can be used to return to register 0
  + add 1 to current register
  - subtract 1 from current register
  , take input from keyboard into current register

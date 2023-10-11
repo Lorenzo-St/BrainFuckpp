@@ -18,7 +18,7 @@ and make it an actually functional programming language
  ] if current register is not zero, got back to start of loop, if not continue 
  { spawn a thread with the passed instructions or function 
  } end of thread
- $ return statement, places the return in register 0 
+ $ return statement, places current register's value in register 0
  % thread return statement, places the current register's value in register 0 of the parent thread 
  = function create next is name 
       note: a return value can be determined by placing the data pointer

@@ -14,6 +14,9 @@
 #include <unordered_map>
 #include <thread>
 #include "BF.hpp"
+// I couldn't think of a better place to put the current nameSpace
+// if there is a better suggestion please make it or change.
+static std::string nameSpace = "";
 
 bool verifyCharacter(char character)
 {
@@ -141,7 +144,11 @@ void makeFunction(std::unordered_map<std::string, const char *> &functions, char
     ++instrctions;
   }
   // add the function's location to the functions map
-  functions[name] = instrctions;
+  if (nameSpace != "")
+    functions[nameSpace + "::" + name] = instrctions;
+  else
+    functions[name] = instrctions;
+
   // move exectution to the end of the function
   while (*instrctions != ')')
     ++instrctions;
@@ -167,7 +174,30 @@ void jumpFunction(std::unordered_map<std::string, const char *> &functions, std:
     ++instrctions;
   }
   // get the location of the function from the map
-  const char *loca = functions[name];
+  const char *loca = nullptr;
+  // check if we are in a nameSpace
+  if (nameSpace != "")
+  {
+    if (name[0] == ':' && name[1] == ':')
+    {
+      name.replace(0, 2, "");
+      loca = functions[name];
+    }
+    else
+    {
+      loca = functions[nameSpace + "::" + name];
+      if (loca == nullptr)
+        loca = functions[name];
+    }
+  }
+  else
+    loca = functions[name];
+
+  if (loca == nullptr)
+  {
+    std::cerr << "Hey fool, You can't call a function that doesn't exist. What do you think will happen? the world might end!!!" << std::endl;
+    throw std::invalid_argument("Hey fool, You can't call a function that doesn't exist. What do you think will happen? the world might end!!!");
+  }
   // make sure the function is a valid call
   if (loca)
   {
@@ -202,6 +232,27 @@ void loopEnd(std::stack<const char *> &loops, const char *data, const char *&ins
     loops.pop();
   else
     instructions = loops.top();
+}
+
+void readNameSpace(const char *&instruction)
+{
+  if ((*instruction + 1) == ':')
+    nameSpace = "";
+  else
+  {
+    ++instruction;
+    std::string localSpace = "";
+    bool skipcheck = false;
+    while (*instruction != ':' || skipcheck)
+    {
+      if (*instruction == '\\')
+        skipcheck = true;
+      else
+        localSpace += *instruction;
+      ++instruction;
+    }
+    nameSpace = localSpace;
+  }
 }
 
 void evaluateCharacter(
@@ -269,7 +320,12 @@ void evaluateCharacter(
     registers[0] = **pointer;
     break;
   case '%':
+    while (parent_registers[0] != 0)
+      ;
     parent_registers[0] = **pointer;
+    break;
+  case ':':
+    readNameSpace(*instruction);
     break;
   }
 }

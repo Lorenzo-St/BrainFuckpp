@@ -26,4 +26,10 @@ and make it an actually functional programming language
  ( start of function 
  ) close function
 () Call function, name of function goes inside of () 
+ : Denotes a namespace. when used as ':foo:' sets the current active namespace to 'foo'
+   When used as '=foo::bar()', it creates a function 'bar' inside the 'foo' namespace
+      note: It is legal for a function to have a single ':' in it's name, however, that will NOT add
+            the function to a namespace, so 'foo:bar' will be different from 'foo::bar'.
 ```
+
+

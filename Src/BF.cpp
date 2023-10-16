@@ -1,14 +1,28 @@
+/**
+ * @file BF.cpp
+ * @author Lorenzo St. Luce
+ * @brief Implementation for interpreter functions
+ * @version 0.1
+ * @date 2023-10-10
+ *
+ * @copyright Copyright Lorenzo St. Luce(c) 2023
+ *
+ */
 #include <vector>
 #include <iostream>
 #include <iomanip>
 #include <unordered_map>
 #include <thread>
 #include "BF.hpp"
+// I couldn't think of a better place to put the current nameSpace
+// if there is a better suggestion please make it or change.
+static std::string nameSpace = "";
 
 bool verifyCharacter(char character)
 {
   switch (character)
   {
+  case ':':
   case '<':
   case '>':
   case '+':
@@ -30,13 +44,13 @@ bool verifyCharacter(char character)
   }
 }
 
-void leftShift(std::vector<char> &registers, char **pointer)
+void leftShift(std::vector<char> const &registers, char **pointer)
 {
   if (*pointer != &(*registers.cbegin()))
     (*pointer)--;
 }
 
-void rightShift(std::vector<char> &registers, char **pointer)
+void rightShift(std::vector<char> const &registers, char **pointer)
 {
   if (*pointer != &(*registers.cend()))
     (*pointer)++;
@@ -51,7 +65,7 @@ void deincrament(char &registers)
   --registers;
 }
 
-void DrawRegisters(std::ostream &os, std::vector<char> &registers, char const *const loc)
+void DrawRegisters(std::ostream &os, std::vector<char> const &registers, char const *const loc)
 {
   const int size = registers.size();
   for (int i = 0; i < size; ++i)
@@ -69,7 +83,7 @@ void DrawRegisters(std::ostream &os, std::vector<char> &registers, char const *c
   os << std::endl;
 }
 
-void DrawFunctions(std::ostream &os, std::unordered_map<std::string, const char *> &functions)
+void DrawFunctions(std::ostream &os, std::unordered_map<std::string, const char *> const &functions)
 {
   for (auto &func : functions)
   {
@@ -97,7 +111,7 @@ void readKey(char &dest)
 
 void print(char const &charac)
 {
-  if (charac == 12 || charac == '\n')
+  if (charac == 13 || charac == '\n')
     std::cout << std::endl;
   else
     std::cout << charac;
@@ -118,6 +132,7 @@ void makeFunction(std::unordered_map<std::string, const char *> &functions, char
       escaped = true;
     else
     {
+
       if (verifyCharacter(*instrctions) == false)
       {
         std::cerr << "YOU FOOL: A function MUST ONLY be named with valid BF characters." << std::endl;
@@ -129,12 +144,14 @@ void makeFunction(std::unordered_map<std::string, const char *> &functions, char
     ++instrctions;
   }
   // add the function's location to the functions map
-  functions[name] = instrctions + 1;
+  if (nameSpace != "")
+    functions[nameSpace + "::" + name] = instrctions;
+  else
+    functions[name] = instrctions;
+
   // move exectution to the end of the function
   while (*instrctions != ')')
     ++instrctions;
-  // go to one after the function
-  ++instrctions;
 }
 
 void jumpFunction(std::unordered_map<std::string, const char *> &functions, std::stack<const char *> &returns, char const *&instrctions)
@@ -157,11 +174,34 @@ void jumpFunction(std::unordered_map<std::string, const char *> &functions, std:
     ++instrctions;
   }
   // get the location of the function from the map
-  const char *loca = functions[name];
+  const char *loca = nullptr;
+  // check if we are in a nameSpace
+  if (nameSpace != "")
+  {
+    if (name[0] == ':' && name[1] == ':')
+    {
+      name.replace(0, 2, "");
+      loca = functions[name];
+    }
+    else
+    {
+      loca = functions[nameSpace + "::" + name];
+      if (loca == nullptr)
+        loca = functions[name];
+    }
+  }
+  else
+    loca = functions[name];
+
+  if (loca == nullptr)
+  {
+    std::cerr << "Hey fool, You can't call a function that doesn't exist. What do you think will happen? the world might end!!!" << std::endl;
+    throw std::invalid_argument("Hey fool, You can't call a function that doesn't exist. What do you think will happen? the world might end!!!");
+  }
   // make sure the function is a valid call
   if (loca)
   {
-    returns.push(instrctions + 1);
+    returns.push(instrctions);
     instrctions = loca;
   }
 }
@@ -173,7 +213,6 @@ void returnFunction(std::stack<const char *> &returns, char const *&instrctions)
   {
     // jump back and pop
     instrctions = returns.top();
-    --instrctions;
     returns.pop();
   }
 }
@@ -193,6 +232,27 @@ void loopEnd(std::stack<const char *> &loops, const char *data, const char *&ins
     loops.pop();
   else
     instructions = loops.top();
+}
+
+void readNameSpace(const char *&instruction)
+{
+  if ((*instruction + 1) == ':')
+    nameSpace = "";
+  else
+  {
+    ++instruction;
+    std::string localSpace = "";
+    bool skipcheck = false;
+    while (*instruction != ':' || skipcheck)
+    {
+      if (*instruction == '\\')
+        skipcheck = true;
+      else
+        localSpace += *instruction;
+      ++instruction;
+    }
+    nameSpace = localSpace;
+  }
 }
 
 void evaluateCharacter(
@@ -260,7 +320,12 @@ void evaluateCharacter(
     registers[0] = **pointer;
     break;
   case '%':
+    while (parent_registers[0] != 0)
+      ;
     parent_registers[0] = **pointer;
+    break;
+  case ':':
+    readNameSpace(*instruction);
     break;
   }
 }
